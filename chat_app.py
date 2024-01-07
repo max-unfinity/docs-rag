@@ -9,7 +9,7 @@ k = st.sidebar.number_input("K retrieval", value=5, step=1, min_value=1, max_val
 if "vectorstore" not in st.session_state:
     load_dotenv(".env")
     st.session_state.vectorstore = read_db("supervisely-dev-portal-db")
-    st.session_state.retriever = get_retriever(st.session_state.vectorstore, k=5)
+    st.session_state.retriever = get_retriever(st.session_state.vectorstore, k=k)
     st.session_state.chain = get_chain(st.session_state.retriever)
     st.session_state.k = k
 
