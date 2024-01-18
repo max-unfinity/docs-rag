@@ -25,8 +25,6 @@ def get_sources(docs):
     return sources
 
 
-k = st.sidebar.number_input("K retrieval", value=4, step=1, min_value=1, max_value=10)
-
 # Init
 if "vectorstore" not in st.session_state:
     load_dotenv(".env")
@@ -34,14 +32,19 @@ if "vectorstore" not in st.session_state:
         config = json.load(f)
     st.session_state.config = config
     st.session_state.vectorstore = read_db("supervisely-dev-portal-db")
-    st.session_state.retriever = get_retriever(st.session_state.vectorstore, k=k)
-    st.session_state.chain = get_chain(st.session_state.retriever)
-    st.session_state.k = k
+    with open("models.json") as f:
+        models = json.load(f)
+    st.session_state.models = models
+models = st.session_state.models
 
-if "k" in st.session_state and st.session_state.k != k:
-    st.session_state.retriever = get_retriever(st.session_state.vectorstore, k=k)
-    st.session_state.chain = get_chain(st.session_state.retriever)
-    st.session_state.k = k
+# Sidebar
+k = st.sidebar.number_input("K docs", value=4, step=1, min_value=1, max_value=10)
+llm = st.sidebar.selectbox("LLM model", models.keys())
+desc = st.sidebar.caption(str(models[llm]))
+temperature = st.sidebar.slider("Temperature", value=0.7, step=0.01, min_value=0.0, max_value=1.0)
+
+retriever = get_retriever(st.session_state.vectorstore, k=k)
+chain = get_chain(retriever, model=llm, temperature=temperature)
 
 
 st.title("Superivsely SDK Assistant")
@@ -64,20 +67,20 @@ if prompt:
 
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
-        docs = retrieve_docs(st.session_state.retriever, prompt)
+        docs = retrieve_docs(retriever, prompt)
         sources = get_sources(docs)
         references = "\n".join([f"- {source}" for source in sources])
         references = "**Retrieved docs:**\n" + references
         st.markdown(references)
 
-        # response = generate_response(st.session_state.chain, prompt)
+        # response = generate_response(chain, prompt)
         # response = "**Answer:**\n\n" + response
         # st.markdown(response)
 
         # Simulate stream of response with milliseconds delay
         response = ""
         message_placeholder = st.empty()
-        for chunk in generate_response_stream(st.session_state.chain, prompt):
+        for chunk in generate_response_stream(chain, prompt):
             response += chunk
             # Add a blinking cursor to simulate typing
             message_placeholder.markdown(response + "▌")
