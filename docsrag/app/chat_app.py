@@ -1,10 +1,17 @@
-import streamlit as st
-from dotenv import load_dotenv
 import json
 import os
-from docsrag.rag.chromadb import read_db, get_retriever
-from docsrag.rag.chain import get_chain, retrieve_docs, generate_response, generate_response_stream
+
+import streamlit as st
+from dotenv import load_dotenv
+
 from docsrag.app.utils import upd_sqlite_version
+from docsrag.rag.chain import (
+    generate_response,
+    generate_response_stream,
+    get_chain,
+    retrieve_docs,
+)
+from docsrag.rag.chromadb import get_retriever, read_db
 
 # Uncomment if truobles with sqlite3 version
 # More info: https://docs.trychroma.com/troubleshooting#sqlite"
@@ -48,7 +55,9 @@ models = st.session_state.models
 k = st.sidebar.number_input("K docs", value=4, step=1, min_value=1, max_value=10)
 llm = st.sidebar.selectbox("LLM model", models.keys())
 desc = st.sidebar.caption(str(models[llm]))
-temperature = st.sidebar.slider("Temperature", value=0.7, step=0.01, min_value=0.0, max_value=1.0)
+temperature = st.sidebar.slider(
+    "Temperature", value=0.7, step=0.01, min_value=0.0, max_value=1.0
+)
 
 retriever = get_retriever(st.session_state.vectorstore, k=k)
 chain = get_chain(retriever, model=llm, temperature=temperature)
@@ -92,7 +101,7 @@ if prompt:
             # Add a blinking cursor to simulate typing
             message_placeholder.markdown(response + "▌")
         message_placeholder.markdown(response)
-    
+
     response = references + "\n\n" + response
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
