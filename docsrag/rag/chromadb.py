@@ -1,5 +1,5 @@
-from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores.chroma import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
 def build_db(docs, persist_directory):
