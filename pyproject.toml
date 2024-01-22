@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "docs-rag"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "docsrag"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
+langchain = "^0.1.1"
+langchainhub = "^0.1.14"
+langchain-benchmarks = "^0.0.10"
+langsmith = "^0.0.83"
+openai = "^1.9.0"
+tiktoken = "^0.5.2"
+chromadb = "^0.4.22"
+bs4 = "^0.0.2"
+pandas = "^2.2.0"
+pyarrow = "^15.0.0"
+langchain-community = "^0.0.14"
+sentence-transformers = "^2.2.2"
+langchain-openai = "^0.0.3"
+streamlit = "^1.30.0"
+pysqlite3-binary = "^0.5.2.post3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
