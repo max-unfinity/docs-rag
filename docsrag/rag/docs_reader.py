@@ -1,5 +1,5 @@
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
 
 
 def read_docs(docs_path, glob="**/*.md", loader_cls=TextLoader, chunk_size=4000, chunk_overlap=500):

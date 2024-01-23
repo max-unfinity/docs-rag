@@ -1,11 +1,11 @@
 from operator import itemgetter
 from typing import Sequence
 
-from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.document import Document
 from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable.passthrough import RunnableAssign
+from langchain_openai import ChatOpenAI
 
 
 # After the retriever fetches documents, this
@@ -45,12 +45,12 @@ def get_chain(retriever, model="gpt-3.5-turbo-1106", temperature=0.7):
                 Here are texts from Superivsely SDK documentation:
                 {context}
                 Answer questions based on the provided texts. If provided texts are not relevant, mention it to the user and answer based on your knowledge.
-                """
+                """,
             ),
             (
                 "human",
                 """The question is:
-                {question}"""
+                {question}""",
             ),
         ]
     )
@@ -67,9 +67,9 @@ def get_chain(retriever, model="gpt-3.5-turbo-1106", temperature=0.7):
     chain = (
         RunnableAssign(
             {
-                "context": (itemgetter("question") | retriever | format_docs).with_config(
-                    run_name="FormatDocs"
-                )
+                "context": (
+                    itemgetter("question") | retriever | format_docs
+                ).with_config(run_name="FormatDocs")
             }
         )
         # The "RunnableAssign" above returns a dict with keys

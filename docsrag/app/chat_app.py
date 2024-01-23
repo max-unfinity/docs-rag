@@ -55,9 +55,7 @@ models = st.session_state.models
 k = st.sidebar.number_input("K docs", value=4, step=1, min_value=1, max_value=10)
 llm = st.sidebar.selectbox("LLM model", models.keys())
 desc = st.sidebar.caption(str(models[llm]))
-temperature = st.sidebar.slider(
-    "Temperature", value=0.7, step=0.01, min_value=0.0, max_value=1.0
-)
+temperature = st.sidebar.slider("Temperature", value=0.7, step=0.01, min_value=0.0, max_value=1.0)
 
 retriever = get_retriever(st.session_state.vectorstore, k=k)
 chain = get_chain(retriever, model=llm, temperature=temperature)
