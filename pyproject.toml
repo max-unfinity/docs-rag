@@ -23,6 +23,8 @@ sentence-transformers = "^2.2.2"
 langchain-openai = "^0.0.3"
 streamlit = "^1.30.0"
 pysqlite3-binary = "^0.5.2.post3"
+streamlit-tree-select = "^0.0.5"
+gitpython = "^3.1.41"
 
 
 [tool.poetry.group.dev.dependencies]
