@@ -1,11 +1,17 @@
+from typing import Optional
 from langchain.vectorstores.chroma import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
-def build_db(docs, persist_directory):
+def build_db(docs, persist_directory, device: Optional[int] = None) -> Chroma:
+    model_kwargs={}
+
+    if device is not None:
+        model_kwargs["device"] = device
+
     embeddings = HuggingFaceEmbeddings(
         model_name="thenlper/gte-base",
-        model_kwargs={"device": 0},  # Comment out to use CPU
+        model_kwargs=model_kwargs,
     )
     vectorstore = Chroma(
         embedding_function=embeddings,
@@ -15,10 +21,15 @@ def build_db(docs, persist_directory):
     return vectorstore
 
 
-def read_db(persist_directory):
+def read_db(persist_directory, device: Optional[int] = None) -> Chroma:
+    model_kwargs={}
+
+    if device is not None:
+        model_kwargs["device"] = device
+
     embeddings = HuggingFaceEmbeddings(
         model_name="thenlper/gte-base",
-        model_kwargs={"device": 0},  # Comment out to use CPU
+        model_kwargs=model_kwargs,
     )
     vectorstore = Chroma(
         embedding_function=embeddings,
