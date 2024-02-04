@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from pathlib import Path
 from typing import List, Union
@@ -19,6 +20,19 @@ def docs_tree(url: str, repo_path: Union[str, Path], file_suffix: str = ".md"):
     if not os.path.exists(repo_path):
         Repo.clone_from(url, repo_path)
     return _make_tree(repo_path, file_suffix)
+
+
+def copy_files_to_folder_if_not_exists(src_files: List[str], dst: Union[str, Path]):
+    if isinstance(dst, str):
+        dst = Path(dst)
+    dst.mkdir(parents=True, exist_ok=True)
+
+    for file in src_files:
+        filepath = Path(file)
+        filename = filepath.name
+        if not (dst / filename).exists():
+            print(f"COPY FILE: {file}")
+            shutil.copyfile(file, dst / filename)
 
 
 def _make_tree(cur_path: Union[str, Path], suffix: str) -> List[dict]:

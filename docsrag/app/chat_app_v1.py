@@ -1,9 +1,17 @@
 import streamlit as st
 import time
+import hashlib
 
+from pathlib import Path
 from streamlit_tree_select import tree_select
 
-from docsrag.rag.docs_reader import docs_tree
+from docsrag.rag.docs_reader import docs_tree, copy_files_to_folder_if_not_exists
+from docsrag.app.utils import prepare_vectorstore, hash_from_str_list, upd_sqlite_version
+
+
+# Uncomment if truobles with sqlite3 version
+# More info: https://docs.trychroma.com/troubleshooting#sqlite"
+upd_sqlite_version()
 
 # Function to simulate chatbot response (to be replaced with actual retrieval logic)
 def get_bot_response(user_input):
@@ -47,17 +55,30 @@ expandable_settings = st.expander("Settings")
 chat_container = st.container()
 input_container = st.container()
 
+
+# prepare vectorstore
 with expandable_settings:
     url_input = st.text_input("Enter docs URL", placeholder="https://github.com/tiangolo/fastapi")
     if url_input:
         load_files_tree(url_input)
+        name = st.session_state.nodes[0]["label"]
+
     with st.form("select_data"):
         selected_data = tree_select(st.session_state.nodes)
         load_new_data_button = st.form_submit_button("Upload")
 
         if load_new_data_button:
             text_files = [p for p in selected_data['checked'] if p.endswith(".md")]
-            print(text_files)
+            cur_hash = hash_from_str_list(text_files)
+            hash_name = f"{name}_{cur_hash}"
+            raw_data_path = Path(".") / hash_name / "raw_data"
+            # insert loading a bar somehow
+            with st.spinner("Preparing files..."):
+                copy_files_to_folder_if_not_exists(
+                    src_files=text_files, dst=raw_data_path
+                )
+            with st.spinner("Preparing vectorstore..."):
+                vectorstore = prepare_vectorstore(hash_name, raw_data_path)
 
 # Chat display area
 with chat_container:
