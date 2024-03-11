@@ -5,14 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Streamlit",
+            "name": "Supervisely",
             "type": "python",
             "request": "launch",
             "module": "streamlit",
             "console": "integratedTerminal",
             "args": [
                 "run",
-                "chat_app.py"
+                "docsrag/app/chat_app.py"
+            ],
+            "env": {
+                "STREAMLIT_SERVER_PORT": "8501"
+            },
+        },
+        {
+            "name": "App v1",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "console": "integratedTerminal",
+            "args": [
+                "run",
+                "docsrag/app/chat_app_v1.py"
             ],
             "env": {
                 "STREAMLIT_SERVER_PORT": "8501"

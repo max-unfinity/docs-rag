@@ -1,9 +1,21 @@
-import streamlit as st
-from dotenv import load_dotenv
 import json
 import os
-from src.chromadb import read_db, get_retriever
-from src.chain import get_chain, retrieve_docs, generate_response, generate_response_stream
+
+import streamlit as st
+from dotenv import load_dotenv
+
+from docsrag.app.utils import upd_sqlite_version
+from docsrag.rag.chain import (
+    generate_response,
+    generate_response_stream,
+    get_chain,
+    retrieve_docs,
+)
+from docsrag.rag.chromadb import get_retriever, read_db
+
+# Uncomment if truobles with sqlite3 version
+# More info: https://docs.trychroma.com/troubleshooting#sqlite"
+upd_sqlite_version()
 
 
 def get_sources(docs):
@@ -30,8 +42,10 @@ if "vectorstore" not in st.session_state:
     load_dotenv(".env")
     with open("config.json") as f:
         config = json.load(f)
+
     st.session_state.config = config
     st.session_state.vectorstore = read_db("supervisely-dev-portal-db")
+
     with open("models.json") as f:
         models = json.load(f)
     st.session_state.models = models
@@ -85,7 +99,7 @@ if prompt:
             # Add a blinking cursor to simulate typing
             message_placeholder.markdown(response + "▌")
         message_placeholder.markdown(response)
-    
+
     response = references + "\n\n" + response
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
