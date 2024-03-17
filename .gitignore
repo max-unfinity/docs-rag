@@ -3,3 +3,4 @@ developer-portal
 supervisely-dev-portal-db
 chromadb
 __pycache__
+/app_data

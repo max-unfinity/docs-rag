@@ -1,5 +1,6 @@
-Langchain QA Benchmark
+- git cloner
+- update repo (pull)
+- making vectorstore
+- Chat history
 
-RAG over Supervisely docs
-- add chat history to prompt.
-+ stream
+- Model Benchmarking

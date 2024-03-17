@@ -1,9 +1,10 @@
+import settings
 import streamlit as st
 from dotenv import load_dotenv
 import json
 import os
-from src.chromadb import read_db, get_retriever
-from src.chain import get_chain, retrieve_docs, generate_response, generate_response_stream
+from docsrag.chromadb import read_db, get_retriever
+from docsrag.chain import get_chain, retrieve_docs, generate_response, generate_response_stream
 
 
 def get_sources(docs):
@@ -31,7 +32,7 @@ if "vectorstore" not in st.session_state:
     with open("config.json") as f:
         config = json.load(f)
     st.session_state.config = config
-    st.session_state.vectorstore = read_db("supervisely-dev-portal-db")
+    st.session_state.vectorstore = read_db(settings.COLLECTION_NAME, settings.CHROMA_DB_DIR, settings.EMBEDDING_MODEL_NAME)
     with open("models.json") as f:
         models = json.load(f)
     st.session_state.models = models

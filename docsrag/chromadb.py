@@ -2,27 +2,29 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores.chroma import Chroma
 
 
-def build_db(docs, persist_directory):
+def build_db(docs, db_name, db_dir, hf_model_name="intfloat/multilingual-e5-base"):
     embeddings = HuggingFaceEmbeddings(
-        model_name="thenlper/gte-base",
+        model_name=hf_model_name,
         model_kwargs={"device": 0},  # Comment out to use CPU
     )
     vectorstore = Chroma(
+        collection_name=db_name,
         embedding_function=embeddings,
-        persist_directory=persist_directory,
+        persist_directory=db_dir,
     )
     vectorstore.add_documents(docs)
     return vectorstore
 
 
-def read_db(persist_directory):
+def read_db(db_name, db_dir, hf_model_name="intfloat/multilingual-e5-base"):
     embeddings = HuggingFaceEmbeddings(
-        model_name="thenlper/gte-base",
+        collection_name=db_name,
+        model_name=hf_model_name,
         model_kwargs={"device": 0},  # Comment out to use CPU
     )
     vectorstore = Chroma(
         embedding_function=embeddings,
-        persist_directory=persist_directory,
+        persist_directory=db_dir,
     )
     return vectorstore
 

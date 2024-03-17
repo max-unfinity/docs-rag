@@ -5,3 +5,5 @@ RUN pip install langchain_benchmarks langsmith
 RUN pip install openai tiktoken chromadb bs4 pandas pyarrow
 RUN pip install sentence-transformers
 RUN pip install langchain-community
+
+RUN pip install streamlit==1.32.2
