@@ -17,6 +17,20 @@
             "env": {
                 "STREAMLIT_SERVER_PORT": "8501"
             },
+        },
+        {
+            "name": "Streamlit docs_loader",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "console": "integratedTerminal",
+            "args": [
+                "run",
+                "docs_loader_app.py"
+            ],
+            "env": {
+                "STREAMLIT_SERVER_PORT": "8501"
+            },
         }
     ]
 }

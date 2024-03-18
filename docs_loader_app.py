@@ -3,31 +3,25 @@ import streamlit as st
 from docsrag.chromadb import build_db
 from docsrag import docs_loader
 
-from git import Repo, RemoteProgress
-
-class CloneProgress(RemoteProgress):
-    def __init__(self, progress_bar):
-        super().__init__()
-        self.progress_bar = progress_bar
-
-    def update(self, op_code, cur_count, max_count=None, message=''):
-        if max_count:
-            self.progress_bar.progress(cur_count / max_count)
-
-
-def prepare_docs(url, progress_fn=None):
-    path = docs_loader.clone_repo(url, settings.APP_DATA, progress_fn)
-    docs = docs_loader.read_docs(path)
-    print(f"Loaded {len(docs)} documents")
-
-    repo_name = url.split('/')[-1]
-    vectorstore = build_db(docs, repo_name, settings.CHROMA_DB_DIR, settings.EMBEDDING_MODEL_NAME)
-    print(f"Built vectorstore for '{repo_name}'")
 
 st.title("Docs Loader")
-progress_bar = st.progress(0, "Cloning repository...")
-url = st.text_input("Repository URL")
+repo_url = st.text_input("Repository URL")
+base_url = st.text_input("Base URL")
+
 
 if st.button("Load"):
-    prepare_docs(url)
+    # p = CloneProgress(progress_bar)
+    with st.spinner("Cloning repository..."):
+        path = docs_loader.clone_repo(repo_url, settings.APP_DATA)
+    docs = docs_loader.read_docs(path)
+    st.info(f"Loaded {len(docs)} documents")
+    collection_name = ".".join(repo_url.split('/')[-2:])
+    with st.spinner(f"Building vectorstore '{collection_name}'..."):
+        vectorstore = build_db(docs, collection_name, settings.CHROMA_DB_DIR, settings.EMBEDDING_MODEL_NAME)
+    metadata = {
+        "repo_url": repo_url,
+        "base_url": base_url,
+        "embedding_model": settings.EMBEDDING_MODEL_NAME,
+    }
+    docs_loader.update_collection_metadata(f"{settings.APP_DATA}/collections.json", collection_name, metadata)
     st.success("Done")
