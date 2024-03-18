@@ -1,0 +1,2 @@
+gitpython
+langchain_openai
