@@ -30,11 +30,6 @@ def read_db(collection_name, db_dir, hf_model_name="intfloat/multilingual-e5-bas
     return vectorstore
 
 
-def get_retriever(vectorstore, k):
-    retriever = vectorstore.as_retriever(search_kwargs={"k": k})
-    return retriever
-
-
 def list_collections(db_dir):
     client = PersistentClient(db_dir)
     return client.list_collections()
