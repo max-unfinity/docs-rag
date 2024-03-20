@@ -1,0 +1,6 @@
+[
+    "thenlper/gte-base",
+    "intfloat/multilingual-e5-base",
+    "intfloat/e5-base-v2",
+    "intfloat/e5-mistral-7b-instruct"
+]
