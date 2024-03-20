@@ -1,4 +1,4 @@
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores.chroma import Chroma
 from chromadb import PersistentClient
 

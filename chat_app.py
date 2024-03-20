@@ -28,9 +28,11 @@ def get_sources(docs, base_url, repo_name):
 
 @st.cache_resource
 def get_vectorstore(collection_name):
+    collections = get_collections()
+    hf_model_name = collections[collection_name]["embedding_model"]
     import time
     t0 = time.time()
-    vec = read_db(collection_name, settings.CHROMA_DB_DIR, settings.EMBEDDING_MODEL_NAME)
+    vec = read_db(collection_name, settings.CHROMA_DB_DIR, hf_model_name)
     print(f"Loaded vectorstore in {time.time()-t0:.2f} seconds.")
     n = vec._collection.count()
     print(f"The vectorstore has {n} vectors.")
@@ -63,10 +65,13 @@ if "messages" not in st.session_state:
 with st.sidebar:
     collection_list = list_collections(settings.CHROMA_DB_DIR)
     collection_name = st.selectbox("Collection", map(lambda x: x.name, collection_list))
-    repo_name = str(collections[collection_name]["repo_url"]).split("/")[-1]
-    base_url = str(collections[collection_name]["base_url"])
+    used_collection = collections[collection_name]
+    repo_name = used_collection["repo_url"].split("/")[-1]
+    base_url = used_collection["base_url"]
     st.caption(f'Repository: "{repo_name}"')
-    st.caption(f"Docs website url: {base_url}")
+    st.caption(f"Embedding model: {collections[collection_name]['embedding_model']}")
+    if base_url:
+        st.caption(f"Docs website url: {base_url}")
     k = st.number_input("Chunks to retrieve", value=4, step=1, min_value=1, max_value=10)
     retrieve_only = st.checkbox("Retrieve only", value=False)
     st.divider()
@@ -92,12 +97,12 @@ if prompt:
 
     with st.chat_message("assistant"):
         docs = retrieve_docs(retriever, prompt)
-        sources = get_sources(docs, base_url, repo_name)
+        # sources = get_sources(docs, base_url, repo_name)
+        sources = [doc.metadata.get("source") for doc in docs]
         for doc, source in zip(docs, sources):
             md = doc.page_content
             with st.expander(source):
                 st.markdown(md)
-                st.markdown(f"**[Source]({source})**")
         # references = "\n".join([f"- {source}" for source in sources])
         # references = "**Retrieved docs:**\n" + references
         # st.markdown(references)
